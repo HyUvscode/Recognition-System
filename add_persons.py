@@ -10,15 +10,18 @@ from torchvision import transforms
 # from face_detection.scrfd.detector import SCRFD
 # from face_detection.yolov5_face.detector import Yolov5Face
 from face_recognition.arcface.model import iresnet_inference
-from yolov5_face.detector import Yolov5Face
+# from yolov5_face.detector import Yolov5Face
+from face_detector.yolov5_face.detector import Yolov5Face
+from ultralytics import YOLO
 from face_recognition.arcface.utils import read_features
 
 # Check if CUDA is available and set the device accordingly
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Initialize the face detector (Choose one of the detectors)
-detector = Yolov5Face(model_file="/home/khuy/Documents/test/face-recognition/yolov5_face/weights/yolov5n-face.pt")
+# detector = YOLO("models/yolov8n.pt")
 # detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
+detector = Yolov5Face(model_file='/home/khuy/Recognition-System/yolov5_face/weights/yolov5s-face.pt')
 
 # Initialize the face recognizer
 recognizer = iresnet_inference(
@@ -73,6 +76,7 @@ def add_persons(backup_dir, add_persons_dir, faces_save_dir, features_path):
     # Initialize lists to store names and features of added images
     images_name = []
     images_emb = []
+    # images_id = []
 
     # Read the folder with images of the new person, extract faces, and save them
     for name_person in os.listdir(add_persons_dir):

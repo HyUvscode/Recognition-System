@@ -78,5 +78,5 @@ def main():
 
 if __name__ == "__main__":
     # main()
-    check_npz_file("/home/khuy/Documents/test/face-recognition/datasets/face_features/feature")
+    check_npz_file("datasets/face_features/feature")
 
