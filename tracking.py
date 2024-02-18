@@ -3,8 +3,8 @@ import time
 import cv2
 import yaml
 
-from face_detection.scrfd.detector import SCRFD
-from face_detection.yolov5_face.detector import Yolov5Face
+# from face_detection.scrfd.detector import SCRFD
+from face_detector.yolov5_face.detector import Yolov5Face
 from face_tracking.tracker.byte_tracker import BYTETracker
 from face_tracking.tracker.visualize import plot_tracking
 
@@ -97,8 +97,10 @@ def main():
     # detector = Yolov5Face(
     #     model_file="face_detection/yolov5_face/weights/yolov5m-face.pt"
     # )
-    detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
+    # detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
+    detector = Yolov5Face(model_file="/home/khuy/Recognition-System/face_detector/yolov5_face/weights/yolov5s-face.pt")
 
+    
     inference(detector=detector, args=config_tracking)
 
 
