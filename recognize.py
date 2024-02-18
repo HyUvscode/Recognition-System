@@ -14,14 +14,17 @@ from face_recognition.arcface.model import iresnet_inference
 from face_recognition.arcface.utils import compare_encodings, read_features
 from face_tracking.tracker.byte_tracker import BYTETracker
 from face_tracking.tracker.visualize import plot_tracking
-from yolov5_face.detector import Yolov5Face
-
+from face_detector.yolov5_face.detector import Yolov5Face
+from face_detector.retinaface.detector import Retinaface
+from face_detector.yolov8_face.Detector import YOLOv8_face
 # Device configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Face detector (choose one)
+# detector = FaceDetector(model_file="/home/khuy/Documents/test/faceprecision/faceprecision/face_detection/yolov8/weights/example_yolov8_weights.pt") 
 # detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
-detector = Yolov5Face(model_file="/home/khuy/Documents/test/face-recognition/yolov5_face/weights/yolov5s-face.pt")
+detector = Yolov5Face(model_file="/home/khuy/Recognition-System/face_detector/yolov5_face/weights/yolov5s-face.pt")
+# detector = Retinaface(model_file="/home/khuy/Recognition-System/face_detector/retinaface/weights/Resnet50_Final.pth", device=device)
 
 # Face recognizer
 recognizer = iresnet_inference(
@@ -78,6 +81,7 @@ def process_tracking(frame, detector, tracker, args, frame_id, fps):
     """
     # Face detection and tracking
     outputs, img_info, bboxes, landmarks = detector.detect_tracking(image=frame)
+    # outputs, img_info, bboxes, landmarks = FaceDetector.
 
     tracking_tlwhs = []
     tracking_ids = []
@@ -85,7 +89,7 @@ def process_tracking(frame, detector, tracker, args, frame_id, fps):
     tracking_bboxes = []
 
     if outputs is not None:
-        online_targets = tracker.update(
+        online_targets = tracker.update( 
             outputs, [img_info["height"], img_info["width"]], (128, 128)
         )
 
@@ -278,7 +282,7 @@ def recognize():
                     break
 
         if tracking_bboxes == []:
-            print("Waiting for a person...")
+            print("Waiting for a person...")    
 
 
 def main():
