@@ -1,14 +1,12 @@
 import time
-
 import cv2
 
-# from face_detection.scrfd.detector import SCRFD
-from face_detector.yolov5_face.detector import Yolov5Face
+# from face_detector.scrfd.detector import SCRFD
+from face_detector.scrfd.detector import SCRFD
+#  from .. import
 
 # Initialize the face detector
-detector = Yolov5Face(model_file="/home/khuy/Recognition-System/face_detector/yolov5_face/weights/yolov5s-face.pt")
-# detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
-
+detector = SCRFD(model_file="face_detector/scrfd/weights/scrfd_10g_bnkps.onnx")
 
 def main():
     # Open the camera

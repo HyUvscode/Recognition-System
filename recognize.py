@@ -8,23 +8,17 @@ import yaml
 from torchvision import transforms
 
 from face_alignment.alignment import norm_crop
-# from face_detection.scrfd.detector import SCRFD
-# from face_detection.yolov5_face.detector import Yolov5Face
 from face_recognition.arcface.model import iresnet_inference
 from face_recognition.arcface.utils import compare_encodings, read_features
 from face_tracking.tracker.byte_tracker import BYTETracker
 from face_tracking.tracker.visualize import plot_tracking
-from face_detector.yolov5_face.detector import Yolov5Face
-from face_detector.retinaface.detector import Retinaface
-from face_detector.yolov8_face.Detector import YOLOv8_face
+from face_detector.scrfd.detector import SCRFD
+
 # Device configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Face detector (choose one)
-# detector = FaceDetector(model_file="/home/khuy/Documents/test/faceprecision/faceprecision/face_detection/yolov8/weights/example_yolov8_weights.pt") 
-# detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
-detector = Yolov5Face(model_file="/home/khuy/Recognition-System/face_detector/yolov5_face/weights/yolov5s-face.pt")
-# detector = Retinaface(model_file="/home/khuy/Recognition-System/face_detector/retinaface/weights/Resnet50_Final.pth", device=device)
+# Face detector
+detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_10g_bnkps.onnx")
 
 # Face recognizer
 recognizer = iresnet_inference(

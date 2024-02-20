@@ -2,26 +2,22 @@ import argparse
 import os
 import shutil
 
+import time
 import cv2
+
 import numpy as np
 import torch
 from torchvision import transforms
 
-# from face_detection.scrfd.detector import SCRFD
-# from face_detection.yolov5_face.detector import Yolov5Face
+from face_detector.scrfd.detector import SCRFD
 from face_recognition.arcface.model import iresnet_inference
-# from yolov5_face.detector import Yolov5Face
-from face_detector.yolov5_face.detector import Yolov5Face
-from ultralytics import YOLO
 from face_recognition.arcface.utils import read_features
 
 # Check if CUDA is available and set the device accordingly
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Initialize the face detector (Choose one of the detectors)
-# detector = YOLO("models/yolov8n.pt")
-# detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_2.5g_bnkps.onnx")
-detector = Yolov5Face(model_file='/home/khuy/Recognition-System/yolov5_face/weights/yolov5s-face.pt')
+detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_10g_bnkps.onnx")
 
 # Initialize the face recognizer
 recognizer = iresnet_inference(
@@ -145,7 +141,6 @@ def add_persons(backup_dir, add_persons_dir, faces_save_dir, features_path):
         shutil.move(dir_to_move, backup_dir, copy_function=shutil.copytree)
 
     print("Successfully added new person!")
-
 
 if __name__ == "__main__":
     # Parse command line arguments
