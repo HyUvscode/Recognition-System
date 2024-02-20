@@ -18,7 +18,7 @@ from face_detector.scrfd.detector import SCRFD
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Face detector
-detector = SCRFD(model_file="face_detection/scrfd/weights/scrfd_10g_bnkps.onnx")
+detector = SCRFD(model_file="face_detector/scrfd/weights/scrfd_10g_bnkps.onnx")
 
 # Face recognizer
 recognizer = iresnet_inference(
