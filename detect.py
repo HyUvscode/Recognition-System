@@ -4,7 +4,7 @@ import os
 from face_detector.scrfd.detector import SCRFD
 
 class FaceDetector:
-    def __init__(self, model_file, save_path):
+    def __init__(self, model_file, save_path, save_delay):
         # Initialize the face detector
         self.detector = SCRFD(model_file=model_file)
         self.cap = cv2.VideoCapture(0)  # Open the camera
@@ -16,6 +16,9 @@ class FaceDetector:
         self.fps = -1
         self.save_path = save_path  # Folder to save detected images
         self.image_count = 0  # Initialize image count
+        self.last_save_time = 0  # Time of the last saved image
+        self.save_delay = save_delay  # Minimum delay between saves in seconds
+
 
         # Create the directory if it does not exist
         if not os.path.exists(self.save_path):
@@ -73,9 +76,12 @@ class FaceDetector:
             print(f"FPS: {self.fps:.2f}")  # Or use cv2.putText to display it on the frame
 
     def save_image(self, frame):
-        filename = f"image{self.image_count}.jpg"
-        cv2.imwrite(filename, frame)
-        self.image_count += 1
+        current_time = time.time()
+        if current_time - self.last_save_time >= self.save_delay:
+            filename = f"{self.save_path}/image{self.image_count}.jpg"
+            cv2.imwrite(filename, frame)
+            self.image_count += 1
+            self.last_save_time = current_time  # Update the last save time
 
     def cleanup(self):
         self.video.release()
@@ -89,7 +95,8 @@ if __name__ == "__main__":
 
     fd = FaceDetector(
         model_file = "face_detector/scrfd/weights/scrfd_10g_bnkps.onnx",
-        save_path = "/home/khuy/Recognition-System/datasets/data/" + code
+        save_path = "/home/khuy/Recognition-System/datasets/new_persons/" + code,
+        save_delay= 2
     )
     
     fd.camera()
