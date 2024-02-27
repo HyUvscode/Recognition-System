@@ -1,7 +1,7 @@
 
 # Recognition-System
 
-Welcome to our Recognition System, a comprehensive solution for face recognition and face detection powered by state-of-the-art models such as ArcFace, RetinaFace, YOLOv5, and YOLOv8. This system integrates cutting-edge technology to provide accurate and efficient recognition capabilities for various applications.
+Welcome to our Recognition System, a comprehensive solution for face recognition and face detection powered by state-of-the-art models such as ArcFace, SCRFD. This system integrates cutting-edge technology to provide accurate and efficient recognition capabilities for various applications.
 ## Authors
 
 - [@Khuy](https://github.com/HyUvscode)
