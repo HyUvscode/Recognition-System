@@ -1,82 +1,95 @@
 import time
 import cv2
-
-# from face_detector.scrfd.detector import SCRFD
+import os
 from face_detector.scrfd.detector import SCRFD
-#  from .. import
 
-# Initialize the face detector
-detector = SCRFD(model_file="face_detector/scrfd/weights/scrfd_10g_bnkps.onnx")
+class FaceDetector:
+    def __init__(self, model_file, save_path):
+        # Initialize the face detector
+        self.detector = SCRFD(model_file=model_file)
+        self.cap = cv2.VideoCapture(0)  # Open the camera
+        self.frame_width = int(self.cap.get(3))
+        self.frame_height = int(self.cap.get(4))
+        self.video = cv2.VideoWriter("results/face-detection.mp4", cv2.VideoWriter_fourcc(*"mp4v"), 30, (self.frame_width, self.frame_height))
+        self.start = time.time_ns()
+        self.frame_count = 0
+        self.fps = -1
+        self.save_path = save_path  # Folder to save detected images
+        self.image_count = 0  # Initialize image count
 
-def main():
-    # Open the camera
-    cap = cv2.VideoCapture(0)
+        # Create the directory if it does not exist
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
 
-    # Initialize variables for measuring frame rate
-    start = time.time_ns()
-    frame_count = 0
-    fps = -1
+    def camera(self):
+        while True:
+            ret, frame = self.cap.read()
+            if not ret:
+                break
 
-    # Save video
-    frame_width = int(cap.get(3))
-    frame_height = int(cap.get(4))
-    size = (frame_width, frame_height)
-    video = cv2.VideoWriter(
-        "results/face-detection.mp4", cv2.VideoWriter_fourcc(*"mp4v"), 30, size
-    )
+            # Process the captured frame for face detection
+            self.process_img(frame)
+            self.update_fps()
 
-    # Read frames from the camera
-    while True:
-        # Capture a frame from the camera
-        _, frame = cap.read()
+            # Save the frame to the video
+            self.video.write(frame)
 
-        # Get faces and landmarks using the face detector
-        bboxes, landmarks = detector.detect(image=frame)
-        h, w, c = frame.shape
+            # Show the result in a window
+            cv2.imshow("Face Detection", frame)
 
+            # Press 'Q' on the keyboard to exit
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
+
+        self.cleanup()
+
+    def process_img(self, frame):
+        # Detect faces and landmarks
+        bboxes, landmarks = self.detector.detect(image=frame)
+        self.draw_detections(frame, bboxes, landmarks)
+
+        # Save the image if faces are detected
+        if len(bboxes) > 0:
+            self.save_image(frame)
+
+    def draw_detections(self, frame, bboxes, landmarks):
+        h, w, _ = frame.shape
         tl = 1 or round(0.002 * (h + w) / 2) + 1  # Line and font thickness
-        clors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (0, 255, 255)]
+        colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (0, 255, 255)]
 
-        # Draw bounding boxes and landmarks on the frame
         for i in range(len(bboxes)):
-            # Get location of the face
             x1, y1, x2, y2, score = bboxes[i]
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 146, 230), 2)
-
-            # Draw facial landmarks
             for id, key_point in enumerate(landmarks[i]):
-                cv2.circle(frame, tuple(key_point), tl + 1, clors[id], -1)
+                cv2.circle(frame, tuple(key_point), tl + 1, colors[id % len(colors)], -1)
 
-        # Calculate and display the frame rate
-        frame_count += 1
-        if frame_count >= 30:
+    def update_fps(self):
+        self.frame_count += 1
+        if self.frame_count >= 30:
             end = time.time_ns()
-            fps = 1e9 * frame_count / (end - start)
-            frame_count = 0
-            start = time.time_ns()
+            self.fps = 1e9 * self.frame_count / (end - self.start)
+            self.frame_count = 0
+            self.start = time.time_ns()
+            print(f"FPS: {self.fps:.2f}")  # Or use cv2.putText to display it on the frame
 
-        if fps > 0:
-            fps_label = "FPS: %.2f" % fps
-            cv2.putText(
-                frame, fps_label, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2
-            )
+    def save_image(self, frame):
+        filename = f"image{self.image_count}.jpg"
+        cv2.imwrite(filename, frame)
+        self.image_count += 1
 
-        # Save the frame to the video
-        video.write(frame)
-
-        # Show the result in a window
-        cv2.imshow("Face Detection", frame)
-
-        # Press 'Q' on the keyboard to exit
-        if cv2.waitKey(25) & 0xFF == ord("q"):
-            break
-
-    # Release video and camera, and close all OpenCV windows
-    video.release()
-    cap.release()
-    cv2.destroyAllWindows()
-    cv2.waitKey(0)
-
+    def cleanup(self):
+        self.video.release()
+        self.cap.release()
+        cv2.destroyAllWindows()
+        cv2.waitKey(1)
 
 if __name__ == "__main__":
-    main()
+    # name = input("User Name: ")
+    code = input("User Code: ")
+
+    fd = FaceDetector(
+        model_file = "face_detector/scrfd/weights/scrfd_10g_bnkps.onnx",
+        save_path = "/home/khuy/Recognition-System/datasets/data/" + code
+    )
+    
+    fd.camera()
