@@ -18,13 +18,14 @@ class FaceDetector:
         self.image_count = 0  # Initialize image count
         self.last_save_time = 0.1  # Time of the last saved image
         self.save_delay = save_delay  # Minimum delay between saves in seconds
-
+        
 
         # Create the directory if it does not exist
         if not os.path.exists(self.save_path):
             os.makedirs(self.save_path)
 
     def camera(self):
+        camera_start_time = time.time()
         while True:
             ret, frame = self.cap.read()
             if not ret:
@@ -39,6 +40,11 @@ class FaceDetector:
 
             # Show the result in a window
             cv2.imshow("Face Detection", frame)
+
+            # NEW: Break the camera after 8 seconds
+            if time.time() - camera_start_time > 8:
+                print("Camera stopped after 8 seconds")
+                break
 
             # Press 'Q' on the keyboard to exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
@@ -80,6 +86,7 @@ class FaceDetector:
         if current_time - self.last_save_time >= self.save_delay:
             filename = f"{self.save_path}/image{self.image_count}.jpg"
             cv2.imwrite(filename, frame)
+            print("save done")
             self.image_count += 1
             self.last_save_time = current_time  # Update the last save time
 
