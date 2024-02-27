@@ -51,7 +51,7 @@ __________________image2.png
 Start add persons to system
 
 ```bash
-  python3 add_persons.py
+  python3 detect.py
 ```
 
 Run recognize file
