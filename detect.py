@@ -16,7 +16,7 @@ class FaceDetector:
         self.fps = -1
         self.save_path = save_path  # Folder to save detected images
         self.image_count = 0  # Initialize image count
-        self.last_save_time = 0  # Time of the last saved image
+        self.last_save_time = 0.1  # Time of the last saved image
         self.save_delay = save_delay  # Minimum delay between saves in seconds
 
 
